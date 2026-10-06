@@ -329,6 +329,15 @@ data:
     #   passwordSecret:
     #     name: argo-mysql-config
     #     key: password
+    #   # options are passed to the MySQL driver, see https://github.com/go-sql-driver/mysql#dsn-data-source-name
+    #   # tls may be one of: "true", "false", "skip-verify", "preferred"
+    #   options:
+    #     tls: "true"
+    #   # awsRDSToken specifies if the password should be fetched as an AWS RDS IAM auth token
+    #   # it requires tls to be "true" or "skip-verify"
+    #   # awsRDSToken:
+    #   #   enabled: true
+    #   #   region: us-east-1
 
   # synchronization configuration for database locks (semaphores and mutexes)
   # This enables coordination between multiple argo controller instances or across clusters
@@ -405,6 +414,15 @@ data:
     #   passwordSecret:
     #     name: argo-mysql-config
     #     key: password
+    #   # options are passed to the MySQL driver, see https://github.com/go-sql-driver/mysql#dsn-data-source-name
+    #   # tls may be one of: "true", "false", "skip-verify", "preferred"
+    #   options:
+    #     tls: "true"
+    #   # awsRDSToken specifies if the password should be fetched as an AWS RDS IAM auth token
+    #   # it requires tls to be "true" or "skip-verify"
+    #   # awsRDSToken:
+    #   #   enabled: true
+    #   #   region: us-east-1
 
   # PodSpecLogStrategy enables the logging of pod specs in the controller log.
   # podSpecLogStrategy: |
