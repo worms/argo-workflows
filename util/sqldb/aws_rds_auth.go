@@ -18,20 +18,31 @@ type awsRDSConnector struct {
 	region   string
 }
 
-func (c *awsRDSConnector) Connect(ctx context.Context) (driver.Conn, error) {
+// buildRDSAuthToken loads the default AWS credential chain and returns a short-lived RDS IAM
+// authentication token for username at endpoint (host:port). If region is empty it is resolved
+// from the AWS configuration.
+func buildRDSAuthToken(ctx context.Context, endpoint, region, username string) (string, error) {
 	opts := []func(*awsconfig.LoadOptions) error{}
-	if c.region != "" {
-		opts = append(opts, awsconfig.WithRegion(c.region))
+	if region != "" {
+		opts = append(opts, awsconfig.WithRegion(region))
 	}
 
 	awsCfg, err := awsconfig.LoadDefaultConfig(ctx, opts...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load AWS config: %w", err)
+		return "", fmt.Errorf("failed to load AWS config: %w", err)
 	}
 
-	token, err := auth.BuildAuthToken(ctx, c.endpoint, awsCfg.Region, c.username, awsCfg.Credentials)
+	token, err := auth.BuildAuthToken(ctx, endpoint, awsCfg.Region, username, awsCfg.Credentials)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build RDS auth token: %w", err)
+		return "", fmt.Errorf("failed to build RDS auth token: %w", err)
+	}
+	return token, nil
+}
+
+func (c *awsRDSConnector) Connect(ctx context.Context) (driver.Conn, error) {
+	token, err := buildRDSAuthToken(ctx, c.endpoint, c.region, c.username)
+	if err != nil {
+		return nil, err
 	}
 
 	// Escape single quotes in token for safe DSN interpolation

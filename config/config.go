@@ -459,6 +459,8 @@ type MySQLConfig struct {
 	DatabaseConfig
 	// Options contains additional MySQL connection options
 	Options map[string]string `json:"options,omitempty"`
+	// AWSRDSToken specifies if the password should be fetched as an AWS RDS IAM auth token
+	AWSRDSToken *AWSRDSTokenConfig `json:"awsRDSToken,omitempty"`
 }
 
 // MetricModifier are modifiers for an individual named metric to change their behaviour
